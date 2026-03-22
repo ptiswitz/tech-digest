@@ -1,0 +1,12 @@
+{
+  "name": "tech-digest",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "digest": "node scripts/generate-digest.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "rss-parser": "^3.13.0"
+  }
+}
