@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Tech Digest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #171717;
+      --border: #2a2a2a;
+      --border-accent: #3a3a3a;
+      --text: #e8e6e0;
+      --text-muted: #6b6965;
+      --text-dim: #3f3d3a;
+      --red: #e05252;
+      --red-bg: #1e1212;
+      --amber: #d4943a;
+      --amber-bg: #1c1710;
+      --blue: #5b9bd5;
+      --blue-bg: #101620;
+      --green: #5ba05b;
+      --green-bg: #101810;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: #1e1e1e;
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 3px;
+      color: #c9b99a;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .sidebar-logo {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-logo span {
+      display: block;
+      font-size: 15px;
+      color: var(--text);
+      letter-spacing: 0;
+      text-transform: none;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      margin-top: 12px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      text-decoration: none;
+    }
+
+    .nav-item:hover { background: var(--surface); color: var(--text); }
+    .nav-item.active { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+
+    .nav-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 2px;
+    }
+
+    .badge-red { background: var(--red-bg); color: var(--red); border: 1px solid #3a1a1a; }
+    .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #3a2a10; }
+    .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a2a3a; }
+    .badge-muted { background: #1a1a1a; color: var(--text-dim); border: 1px solid var(--border); }
+
+    .sidebar-archives {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .archive-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+
+    .archive-link:hover { color: var(--text-muted); background: var(--surface); }
+
+    /* Main content */
+    .main {
+      padding: 2.5rem 3rem;
+      max-width: 860px;
+    }
+
+    .digest-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .digest-week {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .digest-title {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .digest-stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .stat {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .stat strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Priority bar */
+    .priority {
+      background: var(--amber-bg);
+      border: 1px solid #3a2a10;
+      border-left: 3px solid var(--amber);
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-bottom: 2rem;
+    }
+
+    .priority-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--amber);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .priority-text {
+      font-size: 13px;
+      color: #c8a870;
+      line-height: 1.6;
+    }
+
+    /* Sections */
+    .section {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .verdict {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .verdict-now { background: var(--red-bg); color: var(--red); border: 1px solid #3a1a1a; }
+    .verdict-watch { background: var(--blue-bg); color: var(--blue); border: 1px solid #1a2a3a; }
+    .verdict-skip { background: #111; color: var(--text-dim); border: 1px solid var(--border); }
+
+    .section-body { padding: 14px 16px; }
+
+    .block-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .what-changed {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .actions { display: flex; flex-direction: column; gap: 8px; }
+
+    .action-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .action-icon {
+      font-size: 13px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      width: 18px;
+    }
+
+    .action-body { color: var(--text); }
+    .action-body strong { font-weight: 500; color: var(--text-muted); }
+
+    .skipped {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-style: italic;
+      padding: 14px 16px;
+    }
+
+    /* Sources footer */
+    .sources-section {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .sources-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .sources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 6px;
+    }
+
+    .source-item {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 4px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source-item a { color: var(--text-muted); font-size: 12px; }
+    .source-item a:hover { color: var(--text); }
+
+    .source-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-right: 6px;
+    }
+
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-logo">
+        Tech digest
+        <span>Julien's stack</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">This week</div>
+      <!-- JS injects nav items from sections -->
+      <div id="nav-items"></div>
+
+      <div class="nav-label">Archives</div>
+      <div class="sidebar-archives" id="archive-links">
+<a class="archive-link" href="archives/2026-03-22.html">2026-03-22</a>
+</div>
+    </nav>
+  </aside>
+
+  <main class="main" id="main-content">
+    <!-- Generated content injected here by generate-digest.js -->
+    
+    <div class="digest-header">
+      <div class="digest-week">Week of 2026-03-22</div>
+      <div class="digest-title">Weekly tech digest</div>
+      <div class="digest-stats">
+        <div class="stat"><strong>5</strong> items aggregated</div>
+        <div class="stat">Generated by Gemini</div>
+      </div>
+    </div>
+
+    
+    <div class="priority">
+      <div class="priority-label">This week's priority</div>
+      <div class="priority-text">Plan to upgrade <code>vite</code> to <code>8.0.1</code> to benefit from the latest bug fixes and stability improvements.</div>
+    </div>
+
+    <div class="section" id="section-1">
+  <div class="section-header">
+    <span class="section-name">Vue 3 v3.6.0-beta.8</span>
+    <span class="verdict verdict-watch">watch</span>
+  </div>
+  <div class="section-body"><div class="block-label">What changed</div>
+  <div class="what-changed">This is a pre-release for the upcoming Vue 3.6, containing ongoing bug fixes, performance improvements, and new features.</div>
+<div class="block-label">Action</div>
+<div class="actions"><div class="action-row"><span class="action-icon">🔵</span><span class="action-body">Watch — Monitor the <code>minor</code> branch changelog for significant new features or potential breaking changes that may impact component design or reactivity patterns in future stable releases.</span></div></div></div>
+<div class="section" id="section-2">
+  <div class="section-header">
+    <span class="section-name">Vite v8.0.1</span>
+    <span class="verdict verdict-skip">plan</span>
+  </div>
+  <div class="section-body"><div class="block-label">What changed</div>
+  <div class="what-changed">This is a patch release for Vite, primarily containing bug fixes and stability improvements after the Vite 8 major release.</div>
+<div class="block-label">Action</div>
+<div class="actions"><div class="action-row"><span class="action-icon">🟡</span><span class="action-body">Plan — Upgrade to <code>vite@8.0.1</code> during your next maintenance window to incorporate recent bug fixes and stability improvements.</span></div>
+
+    <div class="sources-section">
+      <div class="sources-title">Raw sources (5)</div>
+      <div class="sources-grid">
+        <div class="source-item">
+      <span class="source-tag">Vue 3</span>
+      <a href="https://github.com/vuejs/core/releases/tag/v3.6.0-beta.8" target="_blank" rel="noopener">Vue 3 v3.6.0-beta.8</a>
+    </div>
+<div class="source-item">
+      <span class="source-tag">Vite</span>
+      <a href="https://github.com/vitejs/vite/releases/tag/v8.0.1" target="_blank" rel="noopener">Vite v8.0.1</a>
+    </div>
+<div class="source-item">
+      <span class="source-tag">Vite</span>
+      <a href="https://github.com/vitejs/vite/releases/tag/create-vite%409.0.3" target="_blank" rel="noopener">Vite create-vite@9.0.3</a>
+    </div>
+<div class="source-item">
+      <span class="source-tag">Google AI</span>
+      <a href="https://blog.google/products-and-platforms/products/search/personal-intelligence-expansion/" target="_blank" rel="noopener">Bringing the power of Personal Intelligence to more people</a>
+    </div>
+<div class="source-item">
+      <span class="source-tag">Google AI</span>
+      <a href="https://blog.google/innovation-and-ai/technology/safety-security/ai-powered-open-source-security/" target="_blank" rel="noopener">Our latest investment in open source security for the AI era</a>
+    </div>
+      </div>
+    </div>
+  
+  </main>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('.section');
+    const navContainer = document.getElementById('nav-items');
+
+    sections.forEach(section => {
+      const name = section.querySelector('.section-name')?.textContent;
+      const verdict = section.querySelector('.verdict');
+      if (!name || !navContainer) return;
+
+      const verdictClass = verdict?.classList.contains('verdict-now') ? 'badge-red'
+        : verdict?.classList.contains('verdict-watch') ? 'badge-blue'
+        : 'badge-muted';
+
+      const verdictText = verdict?.classList.contains('verdict-now') ? 'now'
+        : verdict?.classList.contains('verdict-watch') ? 'watch'
+        : 'skip';
+
+      const item = document.createElement('a');
+      item.className = 'nav-item';
+      item.href = '#' + section.id;
+      item.innerHTML = `<span>${name.split(' ')[0]}</span><span class="nav-badge ${verdictClass}">${verdictText}</span>`;
+      navContainer.appendChild(item);
+    });
+
+    const archivesEl = document.getElementById('archive-links');
+    const archives = document.querySelectorAll('.archive-entry');
+    if (archivesEl && archives.length === 0) {
+      archivesEl.innerHTML = '<span class="archive-link" style="cursor:default">No archives yet</span>';
+    }
+  });
+</script>
+
+</body>
+</html>
